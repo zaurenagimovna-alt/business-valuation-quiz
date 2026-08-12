@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>За сколько можно продать ваш бизнес?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16223A;
+    --ink-soft:#3C4A63;
+    --paper:#EDEEE7;
+    --paper-2:#E1E3D6;
+    --card:#F7F7F2;
+    --brass:#AE8A44;
+    --brass-deep:#8C6E31;
+    --teal:#21493C;
+    --rust:#8C3B2E;
+    --line:#CBCEBE;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(22,34,58,.06), 0 8px 24px rgba(22,34,58,.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .app{
+    max-width:560px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding:0 20px 28px;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; margin:0; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--brass-deep);
+  }
+  /* ── header / progress ─────────────────────────────────── */
+  .top{padding:22px 0 10px;}
+  .brand{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px;}
+  .brand .name{font-family:'Fraunces',serif; font-size:17px; font-weight:600;}
+  .brand .step-count{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft);}
+  .progress{
+    height:2px;
+    background:var(--line);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--brass);
+    transition:width .3s ease;
+  }
+
+  /* ── question card ─────────────────────────────────────── */
+  .stage{flex:1; display:flex; flex-direction:column; padding-top:34px;}
+  .block-label{margin-bottom:8px;}
+  .question h2{font-size:23px; line-height:1.25; margin-bottom:6px;}
+  .question .sub{color:var(--ink-soft); font-size:14px; margin-bottom:20px;}
+  .field-group{display:flex; flex-direction:column; gap:10px; margin-top:6px;}
+
+  .btn-option{
+    text-align:left;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--card);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s, background .15s, transform .1s;
+  }
+  .btn-option:hover{border-color:var(--brass);}
+  .btn-option:active{transform:scale(.99);}
+  .btn-option.selected{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .options-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media (max-width:380px){.options-grid{grid-template-columns:1fr;}}
+
+  input[type=text],input[type=number],textarea{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--card);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:16px;
+    color:var(--ink);
+  }
+  input[type=text]{font-family:'IBM Plex Sans',sans-serif;}
+  textarea{font-family:'IBM Plex Sans',sans-serif; min-height:80px; resize:vertical;}
+  input::placeholder,textarea::placeholder{color:#9AA08D;}
+  .unit{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); margin-top:-2px;}
+
+  .sub-fields{
+    margin-top:4px;
+    padding:14px;
+    border-left:2px solid var(--brass);
+    background:var(--paper-2);
+    border-radius:0 var(--radius) var(--radius) 0;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+  .checkbox-row{
+    display:flex; align-items:flex-start; gap:10px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--card);
+    cursor:pointer;
+  }
+  .checkbox-row input{margin-top:3px;}
+  .checkbox-row.checked{border-color:var(--rust); background:#F3E9E5;}
+
+  .skip-link{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    text-decoration:underline;
+    background:none; border:none; cursor:pointer;
+    padding:4px 0;
+  }
+
+  /* ── nav ───────────────────────────────────────────────── */
+  .nav{display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:12px;}
+  .btn-primary{
+    flex:1;
+    padding:15px 20px;
+    border:none;
+    border-radius:var(--radius);
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .btn-primary:disabled{background:#B9BCAC; cursor:not-allowed;}
+  .btn-back{
+    padding:15px 16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:transparent;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Sans',sans-serif;
+    cursor:pointer;
+  }
+
+  .demo-banner{
+    background:var(--rust);
+    color:#fff;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    padding:8px 14px;
+    text-align:center;
+    border-radius:var(--radius);
+    margin-bottom:14px;
+  }
+  .intro{padding-top:60px; text-align:left;}
+  .intro h1{font-size:32px; line-height:1.15; margin-bottom:14px;}
+  .intro p{color:var(--ink-soft); font-size:15px; line-height:1.5; margin-bottom:28px;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   КОНФИГ КОЭФФИЦИЕНТОВ — заполняется ЭКСПЕРТОМ, не придумывается ИИ
+   (требование п.20 ТЗ). Пока источник = "DEMO", это заглушка, и на
+   странице показывается предупреждение — движок не будет выдавать
+   такие цифры за настоящую оценку.
+   ════════════════════════════════════════════════════════════════ */
+var CONFIG = {
+  capRates: {
+    // industry: { min, max, source, date, region, basis, verified }
+    // verified:false — коэффициент не подтверждён источником, и движок
+    // ДОЛЖЕН отказаться считать по нему, а не просто пометить баннером.
+    services: { min:0.18, max:0.26, source:"DEMO", date:"2026-01", region:"Алматы", basis:"equity", verified:false }
+  },
+  marketBenchmarks: {
+    // Это внешний рыночный ориентир по мультипликатору к выручке,
+    // НЕ полноценный сравнительный подход (тот требует анализа сделок-
+    // аналогов с корректировками). Называем и подписываем это честно.
+    services: { min:0.7, max:1.1, source:"DEMO", date:"2026-01", region:"Алматы", metric:"EV/Revenue", basis:"enterprise", verified:false }
+  },
+  liquidationDiscounts: {
+    // industry: { discount, source, date } — справочно, только если задано экспертом
+  }
+};
+
+const isDemoConfig = Object.values(CONFIG.capRates).some(c=>!c.verified)
+                   || Object.values(CONFIG.marketBenchmarks).some(c=>!c.verified);
+
+// Заполнить после деплоя Google Apps Script (см. apps_script_sheet_backend.js
+// и инструкцию к нему). Пока null — форма лида уходит через mailto,
+// как и раньше.
+const LEAD_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbztLQiM-aoxWP1o7-0phnMZXl69Ytj_qxAnVfF9ORxk9SNgA6IxJrhOZ5oxT5IjUlU/exec";
+
+const INDUSTRIES = [
+  ["retail","Розничная торговля"],["wholesale","Оптовая торговля"],
+  ["manufacturing","Производство"],["construction","Строительство"],
+  ["restaurant","Ресторан / кафе"],["medicine","Медицина"],
+  ["education","Образование"],["services","Услуги"],
+  ["it_saas","IT / SaaS"],["logistics","Логистика"],
+  ["beauty","Beauty"],["fitness","Фитнес"],["other","Другое"]
+];
+
+/* ════════════════════════════════════════════════════════════════
+   СОСТОЯНИЕ АНКЕТЫ
+   ════════════════════════════════════════════════════════════════ */
+var state = {
+  step: -1, // -1 = экран приветствия
+  industry:null, city:"", age:null,
+  revenue:null, profit:null, ownerPerks:null, ownerPerksType:null,
+  dynamics:null, fcf:null, fcfSkipped:false,
+  realEstateStatus:null, realEstateValue:null, rentAnnual:null, rentTerm:null,
+  equipment:0, equipmentSkipped:false,
+  inventory:0, inventorySkipped:false,
+  debtStatus:null, debtBank:0, debtOwners:0, debtOther:0,
+  ownerDependency:null, clientConcentration:null, revenueRecurrence:null, team:null,
+  legalRisks:[], legalDetails:"",
+  contactName:"", contactPhone:"", contactCity:""
+};
+
+const TOTAL_STEPS = 16;
+const app = document.getElementById('app');
+
+function fmtT(n){ return new Intl.NumberFormat('ru-RU').format(Math.round(n)); }
+
+/* ── честный прогресс по шагам анкеты. Раньше здесь была
+   «сужающаяся скобка», намекавшая на растущую точность стоимости —
+   убрана: алгоритм не считает точность таким образом, и обещание
+   было бы ложным. Прогресс — просто про то, сколько вопросов
+   осталось. ── */
+function progressHTML(){
+  const pct = Math.round(((state.step+1)/TOTAL_STEPS)*100);
+  return `
+    <div class="progress">
+      <div class="progress-fill" style="width:${pct}%;"></div>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   РЕНДЕР
+   ════════════════════════════════════════════════════════════════ */
+function render(){
+  if(state.step === -1){ renderIntro(); return; }
+  if(state.step === TOTAL_STEPS){ computeAndOpenResults(); return; }
+
+  app.innerHTML = `
+    <div class="top">
+      <div class="brand">
+        <span class="name">За сколько можно продать бизнес?</span>
+        <span class="step-count">Вопрос ${state.step+1} из ${TOTAL_STEPS}</span>
+      </div>
+      ${progressHTML()}
+    </div>
+    <div class="stage">
+      <div class="question" id="question"></div>
+      <div class="nav">
+        <button class="btn-back" id="back" ${state.step===0?'style="visibility:hidden"':''}>Назад</button>
+        <button class="btn-primary" id="next" disabled>Далее</button>
+      </div>
+    </div>`;
+  document.getElementById('back').onclick = ()=>{state.step--; render();};
+  renderStep(state.step);
+}
+
+function setNextEnabled(v){ document.getElementById('next').disabled = !v; }
+function goNext(){ state.step++; render(); }
+
+function optionButtons(container, options, currentVal, onPick, autoAdvance=true){
+  const wrap = document.createElement('div');
+  wrap.className = 'field-group';
+  options.forEach(([val,label])=>{
+    const b = document.createElement('button');
+    b.className = 'btn-option' + (currentVal===val?' selected':'');
+    b.textContent = label;
+    b.onclick = ()=>{ onPick(val); if(autoAdvance){ setTimeout(goNext,220); } else { render(); } };
+    wrap.appendChild(b);
+  });
+  container.appendChild(wrap);
+}
+
+function renderStep(i){
+  const q = document.getElementById('question');
+  q.innerHTML = '';
+  const steps = [
+    stepIndustry, stepCity, stepAge,
+    stepRevenue, stepProfit, stepDynamics, stepFcf,
+    stepRealEstate, stepEquipment, stepInventory, stepDebt,
+    stepOwnerDependency, stepClientConcentration, stepRevenueRecurrence, stepTeam,
+    stepLegalRisks
+  ];
+  steps[i](q);
+}
+
+/* ── Блок A ──────────────────────────────────────────────────── */
+function stepIndustry(q){
+  q.innerHTML = `<div class="eyebrow block-label">Общая информация</div><h2>В какой отрасли ваш бизнес?</h2>`;
+  const grid = document.createElement('div');
+  grid.className = 'options-grid field-group';
+  INDUSTRIES.forEach(([val,label])=>{
+    const b=document.createElement('button');
+    b.className='btn-option'+(state.industry===val?' selected':'');
+    b.textContent=label;
+    b.onclick=()=>{state.industry=val; setTimeout(goNext,220);};
+    grid.appendChild(b);
+  });
+  q.appendChild(grid);
+  setNextEnabled(!!state.industry);
+}
+function stepCity(q){
+  q.innerHTML = `<div class="eyebrow block-label">Общая информация</div><h2>В каком городе работает бизнес?</h2>
+    <div class="field-group"><input type="text" id="city" placeholder="Например, Алматы" value="${state.city}"></div>`;
+  const input = document.getElementById('city');
+  input.oninput = ()=>{ state.city = input.value.trim(); setNextEnabled(!!state.city); };
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(!!state.city);
+}
+function stepAge(q){
+  q.innerHTML = `<div class="eyebrow block-label">Общая информация</div><h2>Сколько лет бизнесу?</h2>`;
+  optionButtons(q, [["<1","до 1 года"],["1-3","1–3 года"],["3-5","3–5 лет"],["5-10","5–10 лет"],["10+","более 10 лет"]],
+    state.age, v=>state.age=v);
+}
+
+/* ── Блок B ──────────────────────────────────────────────────── */
+function stepRevenue(q){
+  q.innerHTML = `<div class="eyebrow block-label">Финансы</div><h2>Какая выручка за последний полный год?</h2>
+    <div class="question sub">Ориентировочно, в тенге за год</div>
+    <div class="field-group"><input type="number" id="rev" placeholder="напр. 120000000" value="${state.revenue??''}">
+    <div class="unit">₸ / год</div></div>`;
+  const input = document.getElementById('rev');
+  input.oninput = ()=>{ state.revenue = input.value?Number(input.value):null; setNextEnabled(!!state.revenue); };
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(!!state.revenue);
+}
+function stepProfit(q){
+  q.innerHTML = `<div class="eyebrow block-label">Финансы</div>
+    <h2>Какую прибыль бизнес получил после основных расходов?</h2>
+    <div class="question sub">За последний полный год, в тенге</div>
+    <div class="field-group">
+      <input type="number" id="profit" placeholder="напр. 25000000" value="${state.profit??''}">
+      <div class="unit">₸ / год</div>
+      <div class="sub-fields">
+        <div class="eyebrow">Нормализация</div>
+        <div style="font-size:14px;">Есть личные расходы или вознаграждения собственника, проходящие через бизнес?</div>
+        <input type="number" id="perks" placeholder="Сумма в год, если есть (иначе оставьте пустым)" value="${state.ownerPerks??''}">
+        <div id="perksTypeWrap"></div>
+      </div>
+    </div>`;
+  const p = document.getElementById('profit'), perks = document.getElementById('perks');
+  function renderPerksType(){
+    const wrap = document.getElementById('perksTypeWrap');
+    if(state.ownerPerks && state.ownerPerks>0){
+      wrap.innerHTML = `<div style="font-size:13px;color:var(--ink-soft);margin-top:4px;">Что входит в эту сумму? Это важно: не всё можно прибавлять к прибыли.</div>
+        <div class="field-group" id="perksTypeBtns"></div>`;
+      const opts = [
+        ["personal","Личные расходы, не связанные с операционной работой"],
+        ["above_market","Вознаграждение сверх рыночного, но за реальную операционную работу"],
+        ["mixed","Смешанное / не уверен(а)"]
+      ];
+      const btnWrap = document.getElementById('perksTypeBtns');
+      opts.forEach(([val,label])=>{
+        const b=document.createElement('button');
+        b.className='btn-option'+(state.ownerPerksType===val?' selected':'');
+        b.style.fontSize='13px';
+        b.textContent=label;
+        b.onclick=()=>{ state.ownerPerksType=val; renderPerksType(); checkProfitValid(); };
+        btnWrap.appendChild(b);
+      });
+    } else {
+      wrap.innerHTML='';
+      state.ownerPerksType=null;
+    }
+  }
+  function checkProfitValid(){
+    const perksOk = !(state.ownerPerks>0) || !!state.ownerPerksType;
+    setNextEnabled(!!state.profit && perksOk);
+  }
+  p.oninput = ()=>{ state.profit = p.value?Number(p.value):null; checkProfitValid(); };
+  perks.oninput = ()=>{ state.ownerPerks = perks.value?Number(perks.value):null; renderPerksType(); checkProfitValid(); };
+  document.getElementById('next').onclick = goNext;
+  renderPerksType();
+  checkProfitValid();
+}
+function stepDynamics(q){
+  q.innerHTML = `<div class="eyebrow block-label">Финансы</div><h2>Как менялись показатели за 2–3 года?</h2>`;
+  optionButtons(q, [["growth","Рост"],["stable","Стабильность"],["decline","Снижение"],
+    ["volatile","Сильные колебания"],["unknown","Недостаточно данных"]], state.dynamics, v=>state.dynamics=v);
+}
+function stepFcf(q){
+  q.innerHTML = `<div class="eyebrow block-label">Финансы</div>
+    <h2>Какой свободный денежный поток генерирует бизнес?</h2>
+    <div class="question sub">Если сложно оценить — можно пропустить, это не остановит анкету</div>
+    <div class="field-group"><input type="number" id="fcf" placeholder="₸ / год" value="${state.fcf??''}">
+    <button class="skip-link" id="skipFcf">Не знаю / пропустить →</button></div>`;
+  const f = document.getElementById('fcf');
+  f.oninput = ()=>{ state.fcf = f.value?Number(f.value):null; state.fcfSkipped=false; setNextEnabled(true); };
+  document.getElementById('skipFcf').onclick = ()=>{ state.fcf=null; state.fcfSkipped=true; goNext(); };
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(true);
+}
+
+/* ── Блок C ──────────────────────────────────────────────────── */
+function stepRealEstate(q){
+  q.innerHTML = `<div class="eyebrow block-label">Активы и обязательства</div><h2>Недвижимость бизнеса?</h2>
+    <div class="field-group" id="reOptions"></div><div id="reSub"></div>`;
+  const grid = document.getElementById('reOptions');
+  [["none","Нет"],["owned","Собственная"],["rented","Арендуемая"]].forEach(([val,label])=>{
+    const b=document.createElement('button');
+    b.className='btn-option'+(state.realEstateStatus===val?' selected':'');
+    b.textContent=label;
+    b.onclick=()=>{
+      state.realEstateStatus=val;
+      if(val!=='owned') state.realEstateValue=null;
+      if(val!=='rented'){ state.rentAnnual=null; state.rentTerm=null; }
+      renderReSub(); checkReValid();
+    };
+    grid.appendChild(b);
+  });
+  function renderReSub(){
+    const sub = document.getElementById('reSub');
+    if(state.realEstateStatus==='owned'){
+      sub.innerHTML = `<div class="sub-fields"><div class="eyebrow">Ориентировочная рыночная стоимость</div>
+        <input type="number" id="reVal" placeholder="₸" value="${state.realEstateValue??''}"></div>`;
+      document.getElementById('reVal').oninput=e=>{state.realEstateValue=e.target.value?Number(e.target.value):null; checkReValid();};
+    } else if(state.realEstateStatus==='rented'){
+      sub.innerHTML = `<div class="sub-fields row2">
+        <div><div class="eyebrow">Аренда / год</div><input type="number" id="rentA" placeholder="₸" value="${state.rentAnnual??''}"></div>
+        <div><div class="eyebrow">Срок договора</div><input type="text" id="rentT" placeholder="напр. 3 года" value="${state.rentTerm??''}"></div>
+      </div>`;
+      document.getElementById('rentA').oninput=e=>{state.rentAnnual=e.target.value?Number(e.target.value):null; checkReValid();};
+      document.getElementById('rentT').oninput=e=>{state.rentTerm=e.target.value; checkReValid();};
+    } else { sub.innerHTML=''; }
+  }
+  function checkReValid(){
+    if(state.realEstateStatus==='none') setNextEnabled(true);
+    else if(state.realEstateStatus==='owned') setNextEnabled(!!state.realEstateValue);
+    else if(state.realEstateStatus==='rented') setNextEnabled(!!state.rentAnnual);
+    else setNextEnabled(false);
+  }
+  renderReSub(); checkReValid();
+  document.getElementById('next').onclick = goNext;
+}
+function stepEquipment(q){
+  q.innerHTML = `<div class="eyebrow block-label">Активы и обязательства</div><h2>Оборудование бизнеса</h2>
+    <div class="question sub">Ориентировочная текущая рыночная стоимость</div>
+    <div class="field-group"><input type="number" id="eq" placeholder="₸" value="${state.equipmentSkipped?'':state.equipment||''}">
+    <button class="skip-link" id="skipEq">Нет оборудования / пропустить →</button></div>`;
+  document.getElementById('eq').oninput=e=>{state.equipment=e.target.value?Number(e.target.value):0; state.equipmentSkipped=false; setNextEnabled(true);};
+  document.getElementById('skipEq').onclick=()=>{state.equipment=0; state.equipmentSkipped=true; goNext();};
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(true);
+}
+function stepInventory(q){
+  q.innerHTML = `<div class="eyebrow block-label">Активы и обязательства</div><h2>Товарные запасы / материалы</h2>
+    <div class="question sub">Ориентировочная стоимость</div>
+    <div class="field-group"><input type="number" id="inv" placeholder="₸" value="${state.inventorySkipped?'':state.inventory||''}">
+    <button class="skip-link" id="skipInv">Нет запасов / пропустить →</button></div>`;
+  document.getElementById('inv').oninput=e=>{state.inventory=e.target.value?Number(e.target.value):0; state.inventorySkipped=false; setNextEnabled(true);};
+  document.getElementById('skipInv').onclick=()=>{state.inventory=0; state.inventorySkipped=true; goNext();};
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(true);
+}
+function stepDebt(q){
+  q.innerHTML = `<div class="eyebrow block-label">Активы и обязательства</div><h2>Есть ли задолженность?</h2>
+    <div class="field-group" id="debtOptions"></div><div id="debtSub"></div>`;
+  const grid = document.getElementById('debtOptions');
+  [["none","Нет"],["some","Есть"]].forEach(([val,label])=>{
+    const b=document.createElement('button');
+    b.className='btn-option'+(state.debtStatus===val?' selected':'');
+    b.textContent=label;
+    b.onclick=()=>{
+      state.debtStatus=val;
+      if(val==='none'){ state.debtBank=0; state.debtOwners=0; state.debtOther=0; }
+      renderSub(); checkValid();
+    };
+    grid.appendChild(b);
+  });
+  function renderSub(){
+    const sub = document.getElementById('debtSub');
+    if(state.debtStatus==='some'){
+      sub.innerHTML = `<div class="sub-fields">
+        <div class="eyebrow">Разбивка задолженности (₸)</div>
+        <input type="number" id="dBank" placeholder="Банковские кредиты" value="${state.debtBank||''}">
+        <input type="number" id="dOwn" placeholder="Займы собственников" value="${state.debtOwners||''}">
+        <input type="number" id="dOth" placeholder="Прочая задолженность" value="${state.debtOther||''}">
+      </div>`;
+      document.getElementById('dBank').oninput=e=>{state.debtBank=Number(e.target.value)||0; checkValid();};
+      document.getElementById('dOwn').oninput=e=>{state.debtOwners=Number(e.target.value)||0; checkValid();};
+      document.getElementById('dOth').oninput=e=>{state.debtOther=Number(e.target.value)||0; checkValid();};
+    } else { sub.innerHTML=''; }
+  }
+  function checkValid(){ setNextEnabled(!!state.debtStatus); }
+  renderSub(); checkValid();
+  document.getElementById('next').onclick = goNext;
+}
+
+/* ── Блок D ──────────────────────────────────────────────────── */
+function stepOwnerDependency(q){
+  q.innerHTML = `<div class="eyebrow block-label">Факторы доходности</div>
+    <h2>Если собственник перестанет участвовать в работе — что будет с бизнесом?</h2>`;
+  optionButtons(q, [
+    ["low","Практически без изменений"],["some","С некоторым снижением"],
+    ["serious","Возникнут серьёзные проблемы"],["stop","Бизнес фактически остановится"]
+  ], state.ownerDependency, v=>state.ownerDependency=v);
+}
+function stepClientConcentration(q){
+  q.innerHTML = `<div class="eyebrow block-label">Факторы доходности</div>
+    <h2>Какая доля выручки приходится на крупнейшего клиента?</h2>`;
+  optionButtons(q, [["<10","<10%"],["10-25","10–25%"],["25-50","25–50%"],[">50",">50%"]],
+    state.clientConcentration, v=>state.clientConcentration=v);
+}
+function stepRevenueRecurrence(q){
+  q.innerHTML = `<div class="eyebrow block-label">Факторы доходности</div><h2>Насколько повторяема выручка?</h2>`;
+  optionButtons(q, [["recurring","Преимущественно регулярная"],["mixed","Смешанная"],["onetime","Преимущественно разовые продажи"]],
+    state.revenueRecurrence, v=>state.revenueRecurrence=v);
+}
+function stepTeam(q){
+  q.innerHTML = `<div class="eyebrow block-label">Факторы доходности</div><h2>Команда бизнеса</h2>`;
+  optionButtons(q, [
+    ["manager","Есть управляющий"],["full_team","Есть полноценная команда"],
+    ["owner_key","Собственник выполняет ключевые функции"],["hard_replace","Заменить собственника сложно"]
+  ], state.team, v=>state.team=v);
+}
+
+/* ── Блок E ──────────────────────────────────────────────────── */
+function stepLegalRisks(q){
+  const risks = [
+    ["disputes","Существенные судебные споры"],["tax","Налоговые претензии"],
+    ["licenses","Проблемы с лицензиями"],["contracts","Существенные договорные ограничения"],
+    ["liens","Обременения активов"],["corporate","Корпоративные конфликты"]
+  ];
+  q.innerHTML = `<div class="eyebrow block-label">Юридические и прочие риски</div>
+    <h2>Есть ли у бизнеса что-то из перечисленного?</h2>
+    <div class="field-group" id="risks"></div>
+    <div id="detailsWrap"></div>`;
+  const wrap = document.getElementById('risks');
+  risks.forEach(([val,label])=>{
+    const row = document.createElement('label');
+    row.className = 'checkbox-row'+(state.legalRisks.includes(val)?' checked':'');
+    row.innerHTML = `<input type="checkbox" ${state.legalRisks.includes(val)?'checked':''}> <span>${label}</span>`;
+    row.querySelector('input').onchange = e=>{
+      if(e.target.checked) state.legalRisks.push(val);
+      else state.legalRisks = state.legalRisks.filter(r=>r!==val);
+      row.classList.toggle('checked', e.target.checked);
+      renderDetails();
+    };
+    wrap.appendChild(row);
+  });
+  function renderDetails(){
+    const d = document.getElementById('detailsWrap');
+    if(state.legalRisks.length){
+      d.innerHTML = `<div class="sub-fields"><div class="eyebrow">Кратко опишите</div>
+        <textarea id="legalDetails" placeholder="Опишите ситуацию в двух словах">${state.legalDetails}</textarea></div>`;
+      document.getElementById('legalDetails').oninput = e=>state.legalDetails=e.target.value;
+    } else { d.innerHTML=''; }
+  }
+  renderDetails();
+  document.getElementById('next').textContent = 'Показать результат';
+  document.getElementById('next').onclick = goNext;
+  setNextEnabled(true);
+}
+
+/* ── Приветственный экран ───────────────────────────────────── */
+function renderIntro(){
+  app.innerHTML = `
+    <div class="intro">
+      ${isDemoConfig?'<div class="demo-banner">⚠ ДЕМО-КОНФИГУРАЦИЯ: коэффициенты не подтверждены источником — не показывать реальным пользователям до замены на п.18 ТЗ</div>':''}
+      <div class="eyebrow">Диагностика · 3–5 минут</div>
+      <h1>За сколько можно продать ваш бизнес?</h1>
+      <p>16 вопросов о вашем бизнесе — и вы сразу увидите предварительный valuation screening на основе доступных рыночных и финансовых ориентиров. Это не официальный отчёт об оценке и не единая «оценка бизнеса» — это отдельные ориентиры с честными ограничениями по каждому.</p>
+      <button class="btn-primary" id="start">Начать</button>
+    </div>`;
+  document.getElementById('start').onclick = ()=>{ state.step=0; render(); };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   РАСЧЁТНЫЙ ДВИЖОК — три подхода стандарта РК.
+   Никакие коэффициенты не придумываются здесь: если в CONFIG для
+   отрасли нет значения — подход помечается как неприменимый
+   ("недостаточно данных"), как того требует п.20 ТЗ.
+   ════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   РАСЧЁТНЫЙ ДВИЖОК — исправленная версия.
+
+   Что изменилось по сравнению с предыдущей версией (по замечаниям
+   ревью):
+   1. Убраны все самостоятельно придуманные коэффициенты: не было
+      источника ни у ×0.85/×1.15 (доходный подход при нестабильной
+      динамике), ни у ±5% (затратный подход), ни у 0.65 (ликвидация),
+      ни у равных весов 1/1/1 при согласовании. Ничего из этого не
+      подставляется движком без экспертного источника.
+   2. У каждого подхода теперь обязательно указана база расчёта —
+      стоимость бизнеса (enterprise value) или стоимость капитала
+      (equity value). Долг вычитается РОВНО ОДИН РАЗ — только у
+      подходов на базе enterprise value, при приведении к equity.
+      Раньше долг мог быть учтён дважды (внутри затратного подхода
+      и затем ещё раз при выводе «доли собственника»).
+   3. Согласование больше не считает единое взвешенное среднее —
+      это было самостоятельное правило, а ваш же ТЗ (п.11) требует,
+      чтобы методика согласования была задана стандартом/экспертом,
+      а не придумана ИИ. Вместо этого движок классифицирует подходы
+      как «основной» / «вспомогательный» / «неприменим» (по логике
+      п.9 ТЗ) и показывает диапазон по основным подходам плюс
+      явный список: какой подход основной и каких данных не хватает.
+   ════════════════════════════════════════════════════════════════ */
+function computeApproaches(){
+  const totalDebt = (state.debtBank||0)+(state.debtOwners||0)+(state.debtOther||0);
+  const assets = (state.realEstateValue||0)+(state.equipment||0)+(state.inventory||0);
+  const netAssets = assets - totalDebt;
+
+  // Нормализация прибыли: прибавляем только ту часть личных
+  // расходов/вознаграждений, которая явно не требует замещения
+  // после сделки. «Сверх рыночного, но за реальную операционную
+  // работу» и «смешанное/не уверен(а)» — НЕ прибавляются, иначе
+  // стоимость может быть искусственно завышена.
+  let normalizedProfit = state.profit||0;
+  let perksNote = null;
+  if(state.ownerPerks>0){
+    if(state.ownerPerksType==='personal'){
+      normalizedProfit += state.ownerPerks;
+    } else {
+      perksNote = 'Указанные '+fmtT(state.ownerPerks)+' ₸ (личные расходы/вознаграждения через бизнес) НЕ добавлены к прибыли: '
+        + (state.ownerPerksType==='above_market'
+            ? 'это вознаграждение за реальную операционную работу собственника — после сделки эту функцию придётся заместить и оплачивать.'
+            : 'тип расходов не уточнён — прибавлять их к прибыли без уточнения было бы необоснованным допущением.');
+    }
+  }
+
+  // ── Доходный ориентир (капитализация) ──
+  let income;
+  const cap = CONFIG.capRates[state.industry];
+  if(!cap){
+    income = {status:'not_applicable', reason:'Не задана ставка капитализации для отрасли «'+labelFor(state.industry)+'» — источник должен указать эксперт.'};
+  } else if(!cap.verified){
+    income = {status:'not_applicable', reason:'Метод временно недоступен: ставка капитализации не подтверждена источником (сейчас это демо-значение).'};
+  } else if(!cap.basis){
+    income = {status:'not_applicable', reason:'Для ставки капитализации не указана база расчёта (бизнес целиком или капитал) — без этого нельзя корректно учесть долг.'};
+  } else if(!normalizedProfit){
+    income = {status:'not_applicable', reason:'Нет данных о нормализуемой прибыли для доходного ориентира.'};
+  } else if(state.dynamics==='unknown'){
+    income = {status:'not_applicable', reason:'Недостаточно данных о динамике для доходного ориентира.'};
+  } else {
+    income = {
+      status: state.dynamics==='stable' ? 'applicable' : 'needs_review',
+      min:normalizedProfit/cap.max, max:normalizedProfit/cap.min,
+      basis:cap.basis, source:cap.source, date:cap.date,
+      note: (state.dynamics==='stable'
+        ? 'Капитализация нормализованной прибыли.'
+        : 'Капитализация нормализованной прибыли. Динамика («'+state.dynamics+'») не подтверждена как стабильная — стабильная выручка не то же самое, что стабильный денежный поток, а для корректного DCF нужны прогнозы, инвестиции и оборотный капитал, которых анкета не собирает. Это направление, а не точный расчёт.')
+        + (perksNote ? ' '+perksNote : '')
+    };
+  }
+
+  // ── Рыночный ориентир (внешний мультипликатор к выручке) ──
+  // Это НЕ полноценный сравнительный подход стандарта РК — тот требует
+  // анализа сделок-аналогов с корректировками. Это внешний ориентир,
+  // и называем его именно так, а не «сравнительный подход».
+  let comparative;
+  const mult = CONFIG.marketBenchmarks[state.industry];
+  if(!mult){
+    comparative = {status:'not_applicable', reason:'Нет подтверждённого источником рыночного мультипликатора для отрасли «'+labelFor(state.industry)+'».'};
+  } else if(!mult.verified){
+    comparative = {status:'not_applicable', reason:'Метод временно недоступен: мультипликатор не подтверждён источником (сейчас это демо-значение).'};
+  } else if(!mult.basis || !mult.metric){
+    comparative = {status:'not_applicable', reason:'Для мультипликатора не указаны метрика (например, EV/Revenue) и база расчёта.'};
+  } else if(!state.revenue){
+    comparative = {status:'not_applicable', reason:'Нет данных о выручке для расчёта по мультипликатору.'};
+  } else {
+    comparative = {
+      status:'needs_review', // внешний ориентир, не замена анализу сделок-аналогов
+      min:state.revenue*mult.min, max:state.revenue*mult.max,
+      basis:mult.basis, source:mult.source, date:mult.date,
+      note:'Внешний рыночный ориентир по мультипликатору '+mult.metric+' — не полноценный сравнительный анализ сделок-аналогов, а справочная точка отсчёта.'
+    };
+  }
+
+  // ── Активная база (на основе введённых активов и обязательств) ──
+  // Не называем это «затратным подходом/скорректированными чистыми
+  // активами» — анкета не собирает дебиторскую/кредиторскую
+  // задолженность, денежные средства, налоговые обязательства и
+  // корректировки стоимости отдельных активов, которые метод требует.
+  let cost;
+  if(assets<=0){
+    cost = {status:'not_applicable', reason:'Недостаточно данных по активам для активной базы.'};
+  } else {
+    cost = {
+      status:'needs_review', min:netAssets, max:netAssets, basis:'equity',
+      note:'Активная база на основе введённых пользователем ориентировочных значений. Не учитывает дебиторскую/кредиторскую задолженность, денежные средства, налоговые обязательства и переоценку отдельных активов — это не полноценный метод скорректированных чистых активов, а грубый ориентир.'
+    };
+  }
+
+  // ── Ликвидационная стоимость (только справочно, только с источником) ──
+  let liquidation = null;
+  const liq = CONFIG.liquidationDiscounts[state.industry];
+  if(liq && netAssets>0){
+    liquidation = {value: netAssets*liq.discount, source:liq.source, date:liq.date};
+  }
+
+  return {income, comparative, cost, liquidation, totalDebt, netAssets, normalizedProfit};
+}
+
+function labelFor(industryVal){
+  const found = INDUSTRIES.find(([v])=>v===industryVal);
+  return found?found[1]:industryVal;
+}
+
+/* Приводит ориентир к стоимости капитала (equity). Долг вычитается
+   здесь и ровно здесь — один раз, только для подходов на базе
+   enterprise value. Подходы на базе equity передаются как есть. */
+function toEquityBasis(item, totalDebt){
+  if(item.status==='not_applicable') return null;
+  if(item.basis==='equity') return {min:item.min, max:item.max};
+  if(item.basis==='enterprise') return {min:Math.max(0,item.min-totalDebt), max:Math.max(0,item.max-totalDebt)};
+  return null;
+}
+
+const STATUS_LABEL = {
+  applicable:'Применимо',
+  needs_review:'Требует дополнительного анализа',
+  not_applicable:'Не применимо при имеющихся данных'
+};
+
+/* Никакого единого «согласованного диапазона» здесь больше не
+   считается — это была бы самостоятельно придуманная методика
+   согласования (веса, правило выбора основного подхода и т.п.),
+   а стандарт требует, чтобы её задавал оценщик/эксперт, а не
+   алгоритм. Вместо этого — три отдельных ориентира + расхождения +
+   дефицит данных, то есть честный valuation screening. */
+function buildScreening(approaches, totalDebt){
+  const defs = [
+    {key:'income', label:'Доходный ориентир', data:approaches.income},
+    {key:'comparative', label:'Рыночный ориентир', data:approaches.comparative},
+    {key:'cost', label:'Активная база', data:approaches.cost}
+  ];
+  const items = defs.map(d=>{
+    const eq = toEquityBasis(d.data, totalDebt);
+    return {key:d.key, label:d.label, status:d.data.status, statusLabel:STATUS_LABEL[d.data.status],
+      min:eq?eq.min:null, max:eq?eq.max:null,
+      note:d.data.note, reason:d.data.reason, source:d.data.source, date:d.data.date};
+  });
+
+  const withRange = items.filter(i=>i.min!=null);
+  const gaps = [];
+  items.filter(i=>i.status==='not_applicable').forEach(i=>gaps.push(i.label+': '+i.reason));
+  items.filter(i=>i.status==='needs_review').forEach(i=>gaps.push(i.label+' — '+i.statusLabel.toLowerCase()+': '+i.note));
+
+  // Расхождения между ориентирами — просто описываем непересекающиеся
+  // диапазоны словами, ничего не усредняя и не выбирая «правильный».
+  const divergences = [];
+  for(let i=0;i<withRange.length;i++){
+    for(let j=i+1;j<withRange.length;j++){
+      const a=withRange[i], b=withRange[j];
+      if(a.max < b.min || b.max < a.min){
+        const lower = a.max<b.min ? a : b, higher = a.max<b.min ? b : a;
+        divergences.push(`${higher.label} указывает на ${fmtT(higher.min)}–${fmtT(higher.max)} ₸, тогда как ${lower.label} — на ${fmtT(lower.min)}–${fmtT(lower.max)} ₸. Такое расхождение само по себе является сигналом и требует отдельной проверки, а не усреднения.`);
+      }
+    }
+  }
+
+  return {items, gaps, divergences, hasAnyRange: withRange.length>0};
+}
+
+function riskFactors(){
+  const f = [];
+  if(['serious','stop'].includes(state.ownerDependency)) f.push('Высокая зависимость бизнеса от собственника');
+  if(['25-50','>50'].includes(state.clientConcentration)) f.push('Высокая концентрация выручки на одном клиенте');
+  if(state.revenueRecurrence==='onetime') f.push('Преимущественно разовые продажи, нет регулярной выручки');
+  if(['decline','volatile','unknown'].includes(state.dynamics)) f.push('Нестабильная или непрозрачная динамика финансовых показателей');
+  if(state.legalRisks.length) f.push('Юридические/налоговые риски требуют дополнительной проверки');
+  return f;
+}
+
+function computeAndOpenResults(){
+  const approaches = computeApproaches();
+  const screening = buildScreening(approaches, approaches.totalDebt);
+  const factors = riskFactors();
+  const html = buildResultsDocument(approaches, screening, factors);
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if(!win){
+    app.innerHTML = `<div class="intro"><h1>Результат готов</h1>
+      <p>Браузер заблокировал новое окно. Откройте результат по ссылке ниже.</p>
+      <a class="btn-primary" style="display:block;text-align:center;text-decoration:none;" href="${url}" target="_blank">Открыть результат</a></div>`;
+  } else {
+    app.innerHTML = `<div class="intro"><h1>Результат открыт в новом окне</h1>
+      <p>Если окно не появилось — проверьте блокировку всплывающих окон в браузере.</p></div>`;
+  }
+}
+
+function buildResultsDocument(approaches, screening, factors){
+  const legalCaveat = state.legalRisks.length ? `
+    <div style="background:#8C3B2E;color:#fff;padding:14px 16px;border-radius:14px;font-size:14px;margin-bottom:18px;">
+      Автоматическая предварительная оценка ограничена. Для определения стоимости необходим дополнительный анализ.
+    </div>` : '';
+
+  const itemCards = screening.items.map(i=>{
+    if(i.min!=null){
+      return `<div class="card">
+        <div class="eyebrow">${i.label} · ${i.statusLabel}</div>
+        <div class="range" style="font-size:24px;">${fmtT(i.min)}${i.min!==i.max?' – '+fmtT(i.max):''} ₸</div>
+        <div class="sub">${i.note}${i.source?' Источник: '+i.source+(i.date?', '+i.date:'')+'.':''}</div>
+      </div>`;
+    }
+    return `<div class="card">
+      <div class="eyebrow">${i.label} · ${i.statusLabel}</div>
+      <div class="sub">${i.reason}</div>
+    </div>`;
+  }).join('');
+
+  const divergenceBlock = screening.divergences.length ? `
+    <div class="card">
+      <div class="eyebrow">Почему результаты различаются</div>
+      ${screening.divergences.map(d=>`<div class="sub" style="margin-bottom:8px;">${d}</div>`).join('')}
+    </div>` : '';
+
+  const gapsBlock = screening.gaps.length ? `
+    <div class="card">
+      <div class="eyebrow">Что нужно проверить перед определением цены</div>
+      <ul>${screening.gaps.map(g=>`<li>${g}</li>`).join('')}</ul>
+    </div>` : '';
+
+  const factorsBlock = factors.length ? `
+    <div class="card">
+      <div class="eyebrow">Что сильнее всего влияет на цену</div>
+      <ul>${factors.map(f=>`<li>${f}</li>`).join('')}</ul>
+      <div class="sub">Эти факторы могут ограничивать цену. Их влияние необходимо оценить индивидуально.</div>
+    </div>` : '';
+
+  const liquidationBlock = approaches.liquidation ? `
+    <div class="sub">Справочно, ликвидационная стоимость (источник: ${approaches.liquidation.source}, ${approaches.liquidation.date}): ${fmtT(approaches.liquidation.value)} ₸</div>` : '';
+
+  const debtNote = approaches.totalDebt>0 ? `
+    <div class="sub">Долг (${fmtT(approaches.totalDebt)} ₸) уже учтён в цифрах выше там, где ориентир изначально относился к стоимости бизнеса целиком — повторно вычитать его не нужно.</div>` : '';
+
+  return `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+  <title>Результат — предварительный valuation screening</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body{background:#EDEEE7;color:#16223A;font-family:'IBM Plex Sans',sans-serif;margin:0;padding:28px 20px 60px;}
+    .wrap{max-width:520px;margin:0 auto;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8C6E31;margin-bottom:6px;}
+    .range{font-family:'IBM Plex Mono',monospace;font-weight:500;margin:4px 0 6px;}
+    .sub{color:#3C4A63;font-size:14px;line-height:1.5;}
+    .card{background:#F7F7F2;border:1px solid #CBCEBE;border-radius:14px;padding:16px 18px;margin-top:14px;}
+    h1{font-family:'Fraunces',serif;font-size:22px;margin:0 0 4px;}
+    h1 + .sub{margin-bottom:18px;}
+    ul{margin:8px 0;padding-left:20px;font-size:14px;}
+    .closing{margin-top:18px;padding:14px 16px;border-left:2px solid #AE8A44;background:#E1E3D6;border-radius:0 14px 14px 0;font-size:13px;color:#3C4A63;}
+    .disclaimer{font-size:12px;color:#8A8F7C;margin-top:22px;line-height:1.5;}
+    .cta{margin-top:26px;padding:20px;background:#16223A;color:#EDEEE7;border-radius:14px;}
+    .cta h2{font-family:'Fraunces',serif;font-size:19px;margin:0 0 8px;color:#EDEEE7;}
+    .cta p{font-size:14px;color:#C7CBD8;margin:0 0 14px;}
+    .cta input,.cta textarea{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid #3C4A63;background:#1F2E4A;color:#EDEEE7;margin-bottom:10px;font-family:'IBM Plex Sans',sans-serif;}
+    .cta button{width:100%;padding:14px;border:none;border-radius:10px;background:#AE8A44;color:#16223A;font-weight:600;font-size:15px;cursor:pointer;}
+    .cta .field-label{font-size:12px;color:#8C9BB5;margin:4px 0 4px;}
+    .cta .chips{display:flex;gap:8px;margin-bottom:10px;}
+    .cta .chip{flex:1;padding:10px;border-radius:10px;border:1px solid #3C4A63;background:#1F2E4A;color:#C7CBD8;font-size:13px;text-align:center;cursor:pointer;}
+    .cta .chip.selected{background:#AE8A44;color:#16223A;border-color:#AE8A44;}
+    .cta .optional{color:#8C9BB5;font-size:11px;}
+    .thankyou{padding:16px;background:#21493C;color:#EDEEE7;border-radius:10px;font-size:14px;}
+  </style></head>
+  <body><div class="wrap">
+    ${legalCaveat}
+    <h1>Предварительный valuation screening</h1>
+    <div class="sub">Результаты применимых методов по отдельности — не единая «оценка бизнеса».</div>
+    ${itemCards}
+    ${liquidationBlock}
+    ${debtNote}
+    ${divergenceBlock}
+    ${factorsBlock}
+    ${gapsBlock}
+    <div class="closing">Предварительный рыночный диапазон не определяется автоматически. Для его определения требуется профессиональное согласование результатов.</div>
+    <div class="cta" id="ctaBlock">
+      <h2>Хотите понять, можно ли продать бизнес дороже?</h2>
+      <p>На персональном разборе эксперт анализирует ваш бизнес глубже: насколько реалистичны эти ориентиры, что снижает привлекательность бизнеса, какие изменения могут увеличить стоимость и как подготовить бизнес к продаже.</p>
+      <div id="ctaForm">
+        <input id="cEmail" placeholder="Email">
+        <input id="cCompany" placeholder="Название ИП / ТОО">
+        <div class="field-label">Тип регистрации</div>
+        <div class="chips" id="companyTypeChips">
+          <div class="chip" data-val="ИП">ИП</div>
+          <div class="chip" data-val="ТОО">ТОО</div>
+          <div class="chip" data-val="Другое">Другое</div>
+        </div>
+        <input id="cName" placeholder="Имя собственника">
+        <div class="optional">необязательно</div>
+        <input id="cPhone" placeholder="Телефон">
+        <div class="optional">необязательно</div>
+        <input id="cWhatsapp" placeholder="WhatsApp (если отличается от телефона)">
+        <div class="optional">необязательно</div>
+        <input id="cCity" placeholder="Город" value="${state.city||''}">
+        <div class="optional" style="margin-bottom:10px;">необязательно</div>
+        <button id="cSubmit">Получить персональный разбор</button>
+      </div>
+    </div>
+    <div class="disclaimer">Это предварительный valuation screening, а не независимая оценка стоимости бизнеса, и он не гарантирует цену будущей сделки. Расчёт выполнен на основании предоставленных пользователем данных. Для определения окончательной стоимости необходим профессиональный анализ финансовой, юридической и иной информации.</div>
+  </div>
+  <script>
+    var LEAD_WEBHOOK_URL = ${JSON.stringify(LEAD_WEBHOOK_URL)};
+    var payloadBase = ${JSON.stringify(leadPayloadBase(screening))};
+    var selectedCompanyType = '';
+    document.querySelectorAll('#companyTypeChips .chip').forEach(function(chip){
+      chip.onclick = function(){
+        document.querySelectorAll('#companyTypeChips .chip').forEach(function(c){ c.classList.remove('selected'); });
+        chip.classList.add('selected');
+        selectedCompanyType = chip.dataset.val;
+      };
+    });
+    document.getElementById('cSubmit').onclick = function(){
+      var name=document.getElementById('cName').value.trim();
+      var company=document.getElementById('cCompany').value.trim();
+      var phone=document.getElementById('cPhone').value.trim();
+      var whatsapp=document.getElementById('cWhatsapp').value.trim();
+      var email=document.getElementById('cEmail').value.trim();
+      var city=document.getElementById('cCity').value.trim();
+      if(!email||!company){ alert('Укажите email и название ИП/ТОО'); return; }
+      var payload = Object.assign({}, payloadBase, {
+        timestamp: new Date().toISOString(),
+        ownerName:name, companyName:company, companyType:selectedCompanyType||'не указан',
+        phone:phone, whatsapp:whatsapp||phone, email:email, city:city
+      });
+      if(LEAD_WEBHOOK_URL){
+        fetch(LEAD_WEBHOOK_URL, {
+          method:'POST', mode:'no-cors',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify(payload)
+        }).catch(function(){});
+        document.getElementById('ctaForm').outerHTML = '<div class="thankyou">Спасибо! Заявка отправлена — с вами свяжутся.</div>';
+      } else {
+        // Таблица пока не подключена (LEAD_WEBHOOK_URL не задан) —
+        // временный запасной вариант, письмо-черновик Белле.
+        var profile = ${JSON.stringify(leadProfileTemplate(screening))};
+        var body = 'Имя собственника: '+name+'\\nИП/ТОО: '+company+' ('+(selectedCompanyType||'не указан')+')'
+          +'\\nТелефон: '+phone+'\\nWhatsApp: '+(whatsapp||phone)+'\\nEmail: '+(email||'-')+'\\nГород: '+city
+          +'\\n\\n'+profile;
+        window.location.href = 'mailto:leads@example.com?subject=' + encodeURIComponent('Новый лид: '+name) + '&body=' + encodeURIComponent(body);
+      }
+    };
+  <\/script>
+  </body></html>`;
+}
+
+function leadProfileTemplate(screening){
+  const lines = [
+    'Отрасль: '+labelFor(state.industry),
+    'Возраст бизнеса: '+state.age,
+    'Выручка: '+(state.revenue||'-')+' ₸',
+    'Прибыль: '+(state.profit||'-')+' ₸',
+    'Активы (недв.+оборуд.+запасы): '+((state.realEstateValue||0)+(state.equipment||0)+(state.inventory||0))+' ₸',
+    'Долг: '+((state.debtBank||0)+(state.debtOwners||0)+(state.debtOther||0))+' ₸'
+  ];
+  screening.items.forEach(i=>{
+    lines.push(i.label+': '+(i.min!=null ? fmtT(i.min)+'–'+fmtT(i.max)+' ₸ ('+i.statusLabel+')' : i.statusLabel));
+  });
+  lines.push('Зависимость от собственника: '+state.ownerDependency);
+  lines.push('Концентрация клиентов: '+state.clientConcentration);
+  lines.push('Юридические риски: '+(state.legalRisks.join(', ')||'нет'));
+  return lines.join('\n');
+}
+
+/* Данные по объекту (бизнесу) + результаты скрининга — то, что должно
+   попасть в табличку, помимо самих контактов. Ключи здесь совпадают
+   с HEADERS в apps_script_sheet_backend.js — если меняете один,
+   меняйте и другой. */
+function leadPayloadBase(screening){
+  const itemText = key=>{
+    const i = screening.items.find(x=>x.key===key);
+    if(!i) return '';
+    return i.min!=null ? fmtT(i.min)+'–'+fmtT(i.max)+' ₸ ('+i.statusLabel+')' : i.statusLabel+': '+i.reason;
+  };
+  return {
+    industry: labelFor(state.industry),
+    age: state.age||'',
+    revenue: state.revenue||'',
+    profit: state.profit||'',
+    assets: (state.realEstateValue||0)+(state.equipment||0)+(state.inventory||0),
+    debt: (state.debtBank||0)+(state.debtOwners||0)+(state.debtOther||0),
+    incomeOrientir: itemText('income'),
+    marketOrientir: itemText('comparative'),
+    assetBase: itemText('cost'),
+    gaps: screening.gaps.join(' | '),
+    ownerDependency: state.ownerDependency||'',
+    clientConcentration: state.clientConcentration||'',
+    legalRisks: state.legalRisks.join(', ')||'нет'
+  };
+}
+
+
+render();
+</script>
+</body>
+</html>
