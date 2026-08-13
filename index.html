@@ -213,7 +213,7 @@ const isDemoConfig = Object.values(CONFIG.capRates).some(c=>!c.verified)
 // Заполнить после деплоя Google Apps Script (см. apps_script_sheet_backend.js
 // и инструкцию к нему). Пока null — форма лида уходит через mailto,
 // как и раньше.
-const LEAD_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbztLQiM-aoxWP1o7-0phnMZXl69Ytj_qxAnVfF9ORxk9SNgA6IxJrhOZ5oxT5IjUlU/exec";
+const LEAD_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxGp3qdwKZis28AfXngwp4USlAYQo0LeixSh8dI6R3O1BuBE6jmNbabs3hzvd2nJ38/exec";
 
 const INDUSTRIES = [
   ["retail","Розничная торговля"],["wholesale","Оптовая торговля"],
@@ -229,6 +229,7 @@ const INDUSTRIES = [
    ════════════════════════════════════════════════════════════════ */
 var state = {
   step: -1, // -1 = экран приветствия
+  leadEmail:null, leadCompany:null,
   industry:null, city:"", age:null,
   revenue:null, profit:null, ownerPerks:null, ownerPerksType:null,
   dynamics:null, fcf:null, fcfSkipped:false,
@@ -590,9 +591,43 @@ function renderIntro(){
       <div class="eyebrow">Диагностика · 3–5 минут</div>
       <h1>За сколько можно продать ваш бизнес?</h1>
       <p>16 вопросов о вашем бизнесе — и вы сразу увидите предварительный valuation screening на основе доступных рыночных и финансовых ориентиров. Это не официальный отчёт об оценке и не единая «оценка бизнеса» — это отдельные ориентиры с честными ограничениями по каждому.</p>
-      <button class="btn-primary" id="start">Начать</button>
+      <div class="field-group">
+        <input type="text" id="leadEmail" placeholder="Email">
+        <input type="text" id="leadCompany" placeholder="Название ИП / ТОО">
+      </div>
+      <button class="btn-primary" id="start" disabled style="margin-top:14px;">Начать</button>
     </div>`;
-  document.getElementById('start').onclick = ()=>{ state.step=0; render(); };
+  const emailInput = document.getElementById('leadEmail'), companyInput = document.getElementById('leadCompany');
+  const startBtn = document.getElementById('start');
+  function checkIntroValid(){ startBtn.disabled = !(emailInput.value.trim() && companyInput.value.trim()); }
+  emailInput.oninput = checkIntroValid;
+  companyInput.oninput = checkIntroValid;
+  startBtn.onclick = ()=>{
+    state.leadEmail = emailInput.value.trim();
+    state.leadCompany = companyInput.value.trim();
+    submitPartialLead(); // фиксируем лид сразу, до вопросов — даже если бросят анкету на середине
+    state.step=0; render();
+  };
+}
+
+/* Ранний, частичный лид — email + название компании, до начала
+   вопросов. Отправляется тем же способом, что и финальная заявка
+   (тот же Google Apps Script), но с stage:'started', чтобы в таблице
+   было видно, кто начал, но не дошёл до конца. Fire-and-forget: если
+   запрос не пройдёт, это не должно мешать прохождению анкеты. */
+function submitPartialLead(){
+  if(!LEAD_WEBHOOK_URL) return;
+  try{
+    fetch(LEAD_WEBHOOK_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        timestamp: new Date().toISOString(),
+        stage: 'started',
+        email: state.leadEmail, companyName: state.leadCompany
+      })
+    }).catch(()=>{});
+  }catch(e){}
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -897,8 +932,8 @@ function buildResultsDocument(approaches, screening, factors){
       <h2>Хотите понять, можно ли продать бизнес дороже?</h2>
       <p>На персональном разборе эксперт анализирует ваш бизнес глубже: насколько реалистичны эти ориентиры, что снижает привлекательность бизнеса, какие изменения могут увеличить стоимость и как подготовить бизнес к продаже.</p>
       <div id="ctaForm">
-        <input id="cEmail" placeholder="Email">
-        <input id="cCompany" placeholder="Название ИП / ТОО">
+        <input id="cEmail" placeholder="Email" value="${state.leadEmail||''}">
+        <input id="cCompany" placeholder="Название ИП / ТОО" value="${state.leadCompany||''}">
         <div class="field-label">Тип регистрации</div>
         <div class="chips" id="companyTypeChips">
           <div class="chip" data-val="ИП">ИП</div>
@@ -939,6 +974,7 @@ function buildResultsDocument(approaches, screening, factors){
       if(!email||!company){ alert('Укажите email и название ИП/ТОО'); return; }
       var payload = Object.assign({}, payloadBase, {
         timestamp: new Date().toISOString(),
+        stage: 'completed',
         ownerName:name, companyName:company, companyType:selectedCompanyType||'не указан',
         phone:phone, whatsapp:whatsapp||phone, email:email, city:city
       });
